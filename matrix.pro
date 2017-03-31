@@ -13,7 +13,7 @@ HEADERS += \
 SOURCES += \
     matrix.cpp
 
-# Определение разрядности системы
+# Определение разрядности
 ARCH_STR = _x86
 contains(QMAKE_HOST.arch, x86_64):{
   ARCH_STR = _x64

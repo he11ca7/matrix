@@ -1,8 +1,10 @@
+/*!
+ * \file
+ * \brief Определения типов фиксированной длины
+ */
 #pragma once
 
 #include <stdint.h>
-
-// Exact-width types
 
 typedef int8_t       int8;
 typedef int16_t      int16;

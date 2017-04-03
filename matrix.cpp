@@ -10,7 +10,19 @@
 #include <iomanip>
 using namespace std;
 
-Matrix::Matrix(uint32 rowCount, uint32 colCount, bool storeRows)
+/*!
+ * \brief Конструктор
+ *
+ * В случае, если одна из размерностей нулевая, вторая тоже становится нулевой.
+ * \param rowCount Число строк
+ * \param colCount Число столбцов
+ * \param storeRows Признак построчного внутреннего хранения.
+ * При построчном хранении данные строк следуют в памяти друг за другом.
+ */
+Matrix::Matrix(
+    uint32 rowCount,
+    uint32 colCount,
+    bool storeRows)
 {
   _NaN = NAN;
 
@@ -21,11 +33,7 @@ Matrix::Matrix(uint32 rowCount, uint32 colCount, bool storeRows)
         (MatrixIndexer) indexerCol;
 
   // Если одна из размерностей нулевая
-  if(
-     ((rowCount == 0) && (colCount == 0)) ||
-     ((rowCount == 0) && (colCount != 0)) ||
-     ((rowCount != 0) && (colCount == 0))
-     )
+  if((rowCount == 0) || (colCount == 0))
     clear();
   else
     {
@@ -39,6 +47,11 @@ Matrix::Matrix(uint32 rowCount, uint32 colCount, bool storeRows)
     }
 }
 
+/*!
+ * \brief Очистить матрицу
+ *
+ * Удалить содержимое и установить размерность 0x0.
+ */
 void Matrix::clear()
 {
   if(_data) free(_data);
@@ -49,23 +62,44 @@ void Matrix::clear()
   _size = 0;
 }
 
-uint32 Matrix::indexerRow(uint32 row, uint32 col, uint32, uint32 colCount)
+uint32 Matrix::indexerRow(
+    uint32 row,
+    uint32 col,
+    uint32,
+    uint32 colCount)
 {
   return row * colCount + col;
 }
 
-uint32 Matrix::indexerCol(uint32 row, uint32 col, uint32 rowCount, uint32)
+uint32 Matrix::indexerCol(
+    uint32 row,
+    uint32 col,
+    uint32 rowCount,
+    uint32)
 {
   return col * rowCount + row;
 }
 
+/*!
+ * \brief Деструктор
+ */
 Matrix::~Matrix()
 {
   if (!_data) return;
   free((void *) _data);
 }
 
-TT &Matrix::v(uint32 row, uint32 col)
+/*!
+ * \brief Доступ к данным
+ *
+ * В случае некорректного входа возвращает NaN.
+ * \param row Номер строки
+ * \param col Номер столбца
+ * \return Данные
+ */
+TT &Matrix::v(
+    uint32 row,
+    uint32 col)
 {
   return (isEmpty() || (row >= _rowCount) || (col >= _colCount)) ?
         _NaN
@@ -73,7 +107,16 @@ TT &Matrix::v(uint32 row, uint32 col)
         _data[_indexer(row, col, _rowCount, _colCount)];
 }
 
-void Matrix::setStoreMode(bool storeRows)
+
+/*!
+ * \brief Установить способ внутреннего хранения
+ *
+ * По умолчанию данные в матрице хранятся последовательно строками.
+ * Однако, в некоторых случаях полезно хранить данные последовательно столбцами.
+ * \param storeRows Признак построчного хранения
+ */
+void Matrix::setStoreMode(
+    bool storeRows)
 {
   if(_storeRows == storeRows) return;
 
@@ -105,7 +148,14 @@ void Matrix::setStoreMode(bool storeRows)
   free(data);
 }
 
-void Matrix::deleteRow(uint32 row, uint32 count)
+/*!
+ * \brief Удалить строку
+ * \param row Номер строки
+ * \param count Количество удаляемых строк
+ */
+void Matrix::deleteRow(
+    uint32 row,
+    uint32 count)
 {
   if(row + count > _rowCount) return;
 
@@ -157,8 +207,14 @@ void Matrix::deleteRow(uint32 row, uint32 count)
   _rowCount -= count;
 }
 
-// Аналогично deleteRow
-void Matrix::deleteCol(uint32 col, uint32 count)
+/*!
+ * \brief Удалить столбец
+ * \param col Номер столбца
+ * \param count Количество удаляемых столбцов
+ */
+void Matrix::deleteCol(
+    uint32 col,
+    uint32 count)
 {
   if(col + count > _colCount) return;
 
@@ -210,16 +266,21 @@ void Matrix::deleteCol(uint32 col, uint32 count)
   _colCount -= count;
 }
 
-void Matrix::resize(uint32 rowCount, uint32 colCount)
+/*!
+ * \brief Изменить размер матрицы
+ *
+ * Если одна из размерностей устанавливается равной нулю, матрица очищается.
+ * \param rowCount Количество строк
+ * \param colCount Количество столбцов
+ */
+void Matrix::resize(
+    uint32 rowCount,
+    uint32 colCount)
 {
   if(rowCount == _rowCount && colCount == _colCount) return;
 
   // Если одна из размерностей нулевая
-  if(
-     ((rowCount == 0) && (colCount == 0)) ||
-     ((rowCount == 0) && (colCount != 0)) ||
-     ((rowCount != 0) && (colCount == 0))
-     )
+  if((rowCount == 0) || (colCount == 0))
     {
       clear();
       return;
@@ -268,6 +329,10 @@ void Matrix::resize(uint32 rowCount, uint32 colCount)
   _rowCount = rowCount;
 }
 
+/*!
+ * \brief Преобразовать матрицу в вид двумерного массива
+ * \return Указатель на указатель
+ */
 TT **Matrix::toPP()
 {
   if(isEmpty()) return NULL;
@@ -292,7 +357,9 @@ TT **Matrix::toPP()
   return result;
 }
 
-void Matrix::printMatrix(Matrix *m, int width)
+void Matrix::printMatrix(
+    Matrix *m,
+    int width)
 {
   cout
       << "Matrix "
@@ -311,7 +378,11 @@ void Matrix::printMatrix(Matrix *m, int width)
   cout << endl << endl;
 }
 
-void Matrix::printMatrix(TT **m, TT rows, TT cols, int width)
+void Matrix::printMatrix(
+    TT **m,
+    TT rows,
+    TT cols,
+    int width)
 {
   cout << "Matrix" << endl;
   for(uint32 i = 0; i < rows; ++i)

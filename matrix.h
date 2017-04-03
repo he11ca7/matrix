@@ -7,7 +7,9 @@ typedef real64 TT;
 // TODO Ввести коды ошибки для методов (в виде параметра--ссылки)
 
 /*!
-   \brief Класс Матрица
+ * \brief Класс Матрица
+ *
+ * Примитивная реализация двухмерной матрицы.
  */
 class Matrix
 {
@@ -47,15 +49,15 @@ public:
   // Параметры
   //----------
 
-  uint32 size() const {return _size;}
-  uint32 rowCount() const {return _rowCount;}
-  uint32 colCount() const {return _colCount;}
-  bool storeMode() const {return _storeRows;}
+  uint32 size() const {return _size;}         ///< Объём выделенной памяти
+  uint32 rowCount() const {return _rowCount;} ///< Количество строк
+  uint32 colCount() const {return _colCount;} ///< Количество столбцов
+  bool storeMode() const {return _storeRows;} ///< Способ внутреннего хранения
   void setStoreMode(
       bool storeRows);
 
   void clear();
-  bool isEmpty() const {return _size == 0;}
+  bool isEmpty() const {return _size == 0;}   ///< Является ли матрица пустой
 
   //-----------
   // Управление

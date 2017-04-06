@@ -330,7 +330,7 @@ void Matrix::resize(
 }
 
 /*!
- * \brief Преобразовать матрицу в вид двумерного массива
+ * \brief Преобразовать матрицу в вид двумерного динамического массива
  * \return Указатель на указатель
  */
 TT **Matrix::toPP()
@@ -353,6 +353,28 @@ TT **Matrix::toPP()
   for(uint32 i = 0; i < _rowCount; ++i)
     for(uint32 j = 0; j < _colCount; ++j)
       result[i][j] = _data[_indexer(i, j, _rowCount, _colCount)];
+
+  return result;
+}
+
+/*!
+ * \brief Преобразовать матрицу в вид одномерного динамического массива
+ * \return Указатель
+ */
+TT *Matrix::toP()
+{
+  if(isEmpty()) return NULL;
+
+  // Память
+  TT *result = (TT *) malloc(_size);
+  assert(result);
+
+  // Содержимое
+  memcpy(
+        (void *) result,
+        (void *) _data,
+        _size
+        );
 
   return result;
 }
@@ -380,8 +402,8 @@ void Matrix::printMatrix(
 
 void Matrix::printMatrix(
     TT **m,
-    TT rows,
-    TT cols,
+    uint32 rows,
+    uint32 cols,
     int width)
 {
   cout << "Matrix" << endl;

@@ -5,6 +5,10 @@
 typedef real64 TT;
 
 // TODO Ввести коды ошибки для методов (в виде параметра--ссылки)
+// TODO Ввести typedef на тип размерностей
+// TODO Тестировать toP()
+// TODO Избавиться от приведений на void*
+// TODO Записи вида (&_data[pos]) преобразовать в (_data + pos)
 
 /*!
  * \brief Класс Матрица
@@ -78,6 +82,7 @@ public:
   //---------------
 
   TT **toPP();
+  TT *toP();
 
   //--------
   // Отладка
@@ -89,7 +94,7 @@ public:
 
   static void printMatrix(
       TT **m,
-      TT rows,
-      TT cols,
+      uint32 rows,
+      uint32 cols,
       int width = 6);
 };

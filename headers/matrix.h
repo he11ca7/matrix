@@ -39,9 +39,11 @@ private:
 public:
 
   Matrix(
-      uint32 rowCount = 0,
-      uint32 colCount = 0,
+      uint32 rowCount,
+      uint32 colCount,
       bool storeRows = true);
+  Matrix(
+      bool storeRows = true) : Matrix(0, 0, storeRows) {} // Только C++11
   ~Matrix();
 
   TT &v(

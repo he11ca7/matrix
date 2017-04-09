@@ -26,6 +26,7 @@ Matrix::Matrix(
 {
   _defaultValue = -1; // Провоцирует NaN
   _NaN = NAN;
+  _data = NULL;
 
   _storeRows = storeRows;
   _indexer = storeRows ?

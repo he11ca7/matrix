@@ -20,8 +20,8 @@ using namespace std;
  * При построчном хранении данные строк следуют в памяти друг за другом.
  */
 Matrix::Matrix(
-    uint32 rowCount,
-    uint32 colCount,
+    TI rowCount,
+    TI colCount,
     bool storeRows)
 {
   _defaultValue = -1; // Провоцирует NaN
@@ -64,20 +64,20 @@ void Matrix::clear()
   _size = 0;
 }
 
-uint32 Matrix::indexerRow(
-    uint32 row,
-    uint32 col,
-    uint32,
-    uint32 colCount)
+TI Matrix::indexerRow(
+    TI row,
+    TI col,
+    TI,
+    TI colCount)
 {
   return row * colCount + col;
 }
 
-uint32 Matrix::indexerCol(
-    uint32 row,
-    uint32 col,
-    uint32 rowCount,
-    uint32)
+TI Matrix::indexerCol(
+    TI row,
+    TI col,
+    TI rowCount,
+    TI)
 {
   return col * rowCount + row;
 }
@@ -99,9 +99,9 @@ Matrix::~Matrix()
  * \param col Номер столбца
  * \return Данные
  */
-TT &Matrix::v(
-    uint32 row,
-    uint32 col)
+TT &Matrix::o(
+    TI row,
+    TI col)
 {
   return (isEmpty() || (row >= _rowCount) || (col >= _colCount)) ?
         _NaN
@@ -138,8 +138,8 @@ void Matrix::setStoreMode(
   memcpy(data, _data, _size);
 
   // Переместить данные
-  for(uint32 i = 0; i < _rowCount; ++i)
-    for(uint32 j = 0; j < _colCount; ++j)
+  for(TI i = 0; i < _rowCount; ++i)
+    for(TI j = 0; j < _colCount; ++j)
       _data[_indexer(i, j, _rowCount, _colCount)] =
           data[indexer(i, j, _rowCount, _colCount)];
 
@@ -152,8 +152,8 @@ void Matrix::setStoreMode(
  * \param count Количество удаляемых строк
  */
 void Matrix::deleteRow(
-    uint32 row,
-    uint32 count)
+    TI row,
+    TI count)
 {
   if(row + count > _rowCount) return;
 
@@ -173,7 +173,7 @@ void Matrix::deleteRow(
       if(row + count < _rowCount)
         {
           // Позиция "сдвигаемой" части памяти
-          uint32 pos = _indexer(row + count, 0, _rowCount, _colCount);
+          TI pos = _indexer(row + count, 0, _rowCount, _colCount);
           memmove(
                 _data + _indexer(row, 0, _rowCount, _colCount),
                 _data + pos,
@@ -190,8 +190,8 @@ void Matrix::deleteRow(
       _data = (TT *) malloc(_size);
       assert(_data);
 
-      for(uint32 i = 0; i < _rowCount - count; ++i)
-        for(uint32 j = 0; j < _colCount; ++j)
+      for(TI i = 0; i < _rowCount - count; ++i)
+        for(TI j = 0; j < _colCount; ++j)
           _data[_indexer(i, j, _rowCount - count, _colCount)] =
               data[_indexer(i + ((i >= row) ? count : 0),
                             j,
@@ -210,8 +210,8 @@ void Matrix::deleteRow(
  * \param count Количество удаляемых столбцов
  */
 void Matrix::deleteCol(
-    uint32 col,
-    uint32 count)
+    TI col,
+    TI count)
 {
   if(col + count > _colCount) return;
 
@@ -231,7 +231,7 @@ void Matrix::deleteCol(
       if(col + count < _colCount)
         {
           // Позиция "сдвигаемой" части памяти
-          uint32 pos = _indexer(0, col + count, _rowCount, _colCount);
+          TI pos = _indexer(0, col + count, _rowCount, _colCount);
           memmove(
                 _data + _indexer(0, col, _rowCount, _colCount),
                 _data + pos,
@@ -248,8 +248,8 @@ void Matrix::deleteCol(
       _data = (TT *) malloc(_size);
       assert(_data);
 
-      for(uint32 i = 0; i < _rowCount; ++i)
-        for(uint32 j = 0; j < _colCount - count; ++j)
+      for(TI i = 0; i < _rowCount; ++i)
+        for(TI j = 0; j < _colCount - count; ++j)
           _data[_indexer(i, j, _rowCount, _colCount - count)] =
               data[_indexer(i,
                             j + ((j >= col) ? count : 0),
@@ -270,8 +270,8 @@ void Matrix::deleteCol(
  * \param colCount Количество столбцов
  */
 void Matrix::resize(
-    uint32 rowCount,
-    uint32 colCount)
+    TI rowCount,
+    TI colCount)
 {
   if(rowCount == _rowCount && colCount == _colCount) return;
 
@@ -312,8 +312,8 @@ void Matrix::resize(
 
       memset(_data, _defaultValue, _size);
 
-      for(uint32 i = 0; i < rowCount; ++i)
-        for(uint32 j = 0; j < colCount; ++j)
+      for(TI i = 0; i < rowCount; ++i)
+        for(TI j = 0; j < colCount; ++j)
           if(j < _colCount && i < _rowCount)
             _data[_indexer(i, j, rowCount, colCount)] =
                 temp[_indexer(i, j, _rowCount, _colCount)];
@@ -330,7 +330,7 @@ void Matrix::resize(
  * \param rowCount Число строк
  */
 void Matrix::setRowCount(
-    uint32 rowCount)
+    TI rowCount)
 {
   resize(rowCount, _colCount);
 }
@@ -340,7 +340,7 @@ void Matrix::setRowCount(
  * \param colCount Чтсло столбцов
  */
 void Matrix::setColCount(
-    uint32 colCount)
+    TI colCount)
 {
   resize(_rowCount, colCount);
 }
@@ -358,11 +358,11 @@ TT **Matrix::toPP()
   if(isEmpty()) return NULL;
 
   // Память
-  uint32 dimension1 = _storeRows ? _rowCount : _colCount;
-  uint32 dimension2 = _storeRows ? _colCount : _rowCount;
+  TI dimension1 = _storeRows ? _rowCount : _colCount;
+  TI dimension2 = _storeRows ? _colCount : _rowCount;
   TT **result = (TT **) malloc(dimension1 * sizeof(TT *));
   assert(result);
-  for(uint32 i = 0; i < dimension1; ++i)
+  for(TI i = 0; i < dimension1; ++i)
     {
       result[i] = (TT *) malloc(dimension2 * sizeof(TT));
       assert(result[i]);
@@ -370,14 +370,14 @@ TT **Matrix::toPP()
 
   // Содержимое
   if(_storeRows)
-    for(uint32 i = 0; i < _rowCount; ++i)
+    for(TI i = 0; i < _rowCount; ++i)
       memcpy(
             *(result + i),
             _data + _indexer(i, 0, _rowCount, _colCount),
             _colCount * sizeof(TT)
             );
   else
-    for(uint32 j = 0; j < _colCount; ++j)
+    for(TI j = 0; j < _colCount; ++j)
       memcpy(
             *(result + j),
             _data + _indexer(0, j, _rowCount, _colCount),
@@ -419,17 +419,17 @@ TT *Matrix::toP()
  */
 Matrix *Matrix::fromPP(
     TT **PP,
-    uint32 rowCount,
-    uint32 colCount,
+    TI rowCount,
+    TI colCount,
     bool storeRows)
 {
   if(rowCount == 0 || colCount == 0)
     return NULL;
 
   Matrix *result = new Matrix(rowCount, colCount, storeRows);
-  for(uint32 i = 0; i < result->rowCount(); ++i)
-    for(uint32 j = 0; j < result->colCount(); ++j)
-      result->v(i, j) = storeRows ? PP[i][j] : PP[j][i];
+  for(TI i = 0; i < result->rowCount(); ++i)
+    for(TI j = 0; j < result->colCount(); ++j)
+      result->o(i, j) = storeRows ? PP[i][j] : PP[j][i];
 
   return result;
 }
@@ -446,8 +446,8 @@ Matrix *Matrix::fromPP(
  */
 Matrix *Matrix::fromP(
     TT *P,
-    uint32 rowCount,
-    uint32 colCount,
+    TI rowCount,
+    TI colCount,
     bool storeRows)
 {
   if(rowCount == 0 || colCount == 0)
@@ -458,9 +458,9 @@ Matrix *Matrix::fromP(
         (MatrixIndexer) indexerRow
       :
         (MatrixIndexer) indexerCol;
-  for(uint32 i = 0; i < rowCount; ++i)
-    for(uint32 j = 0; j < colCount; ++j)
-      result->v(i, j) = P[indexer(i, j, rowCount, colCount)];
+  for(TI i = 0; i < rowCount; ++i)
+    for(TI j = 0; j < colCount; ++j)
+      result->o(i, j) = P[indexer(i, j, rowCount, colCount)];
 
   return result;
 }
@@ -474,11 +474,11 @@ void Matrix::printMatrix(
       << m->rowCount() << "x" << m->colCount()
       << " (" << m->size() << "B)"
       << endl;
-  for(uint32 j = 0; j < m->rowCount(); ++j)
+  for(TI j = 0; j < m->rowCount(); ++j)
     {
-      for(uint32 i = 0; i < m->colCount(); ++i)
+      for(TI i = 0; i < m->colCount(); ++i)
         {
-          TT value = m->v(j, i);
+          TT value = m->o(j, i);
           cout << setw(width) << value;
         }
       cout << endl;
@@ -488,14 +488,14 @@ void Matrix::printMatrix(
 
 void Matrix::printMatrix(
     TT **m,
-    uint32 rows,
-    uint32 cols,
+    TI rows,
+    TI cols,
     int width)
 {
   cout << "Matrix" << endl;
-  for(uint32 i = 0; i < rows; ++i)
+  for(TI i = 0; i < rows; ++i)
     {
-      for(uint32 j = 0; j < cols; ++j)
+      for(TI j = 0; j < cols; ++j)
         cout
             << setw(width)
             << m[i][j];

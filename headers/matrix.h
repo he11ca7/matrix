@@ -2,62 +2,65 @@
 
 #include "defines.h"
 
-typedef real64 TT;
+typedef real64 TT; // Для данных
+typedef uint32 TI; // Для итераторов
 
-// TODO Ввести коды ошибки для методов (в виде параметра--ссылки)
-// TODO Ввести typedef на тип размерностей
-// TODO Тестировать toP()
+// TODO Коды ошибки для методов (в виде параметра--ссылки)
 // TODO Ввести методы получения отдельных строк/столбцов (нескольких подряд)
+// TODO Свести в одну _defaultValue и _NaN [в _defaultValue]
 
 /*!
  * \brief Класс Матрица
  *
- * Примитивная реализация двухмерной матрицы.
+ * Реализация двухмерной матрицы.
  */
 class Matrix
 {
 private:
 
   TT     *_data;
-  uint32  _size;          /// Объём выделенной памяти
-  uint32
-          _rowCount,      /// Количество строк
-          _colCount;      /// Количество столбцов
-  bool    _storeRows;     /// Признак построчного внутреннего хранения
-  TT      _defaultValue;  /// Значение по умолчанию
-  TT      _NaN;           /// NaN
+  TI      _size;          // Объём выделенной памяти
+  TI
+          _rowCount,      // Количество строк
+          _colCount;      // Количество столбцов
+  bool    _storeRows;     // Признак построчного внутреннего хранения
+  TT      _defaultValue;  // Значение по умолчанию
+  TT      _NaN;           // NaN
 
   //------------
   // Индексаторы
   //------------
 
-  typedef uint32 (*MatrixIndexer) (uint32 row, uint32 col,
-                                   uint32 rowCount, uint32 colCount);
-  static uint32 indexerRow(uint32 row, uint32 col, uint32, uint32 colCount);
-  static uint32 indexerCol(uint32 row, uint32 col, uint32 rowCount, uint32);
+  typedef TI (*MatrixIndexer) (TI row, TI col, TI rowCount, TI colCount);
+  static TI indexerRow(TI row, TI col, TI, TI colCount);
+  static TI indexerCol(TI row, TI col, TI rowCount, TI);
   MatrixIndexer _indexer;
 
 public:
 
   Matrix(
-      uint32 rowCount,
-      uint32 colCount,
+      TI rowCount,
+      TI colCount,
       bool storeRows = true);
   Matrix(
-      bool storeRows = true) : Matrix(0, 0, storeRows) {} // Только C++11
+      bool storeRows = true) : Matrix(0, 0, storeRows) {} // NOTE C++11
   ~Matrix();
 
-  TT &v(
-      uint32 row,
-      uint32 col);
+  //----------------
+  // Доступ к данным
+  //----------------
+
+  TT &o(
+      TI row,
+      TI col);
 
   //----------
   // Параметры
   //----------
 
-  uint32 size() const {return _size;}             ///< Объём выделенной памяти
-  uint32 rowCount() const {return _rowCount;}     ///< Количество строк
-  uint32 colCount() const {return _colCount;}     ///< Количество столбцов
+  TI size() const {return _size;}                 ///< Объём выделенной памяти
+  TI rowCount() const {return _rowCount;}         ///< Количество строк
+  TI colCount() const {return _colCount;}         ///< Количество столбцов
   bool storeMode() const {return _storeRows;}     ///< Способ внутреннего хранения
   TT defaultValue() const {return _defaultValue;} ///< Значение по умолчанию
 
@@ -74,18 +77,18 @@ public:
   //-----------
 
   void deleteRow(
-      uint32 row,
-      uint32 count = 1);
+      TI row,
+      TI count = 1);
   void deleteCol(
-      uint32 col,
-      uint32 count = 1);
+      TI col,
+      TI count = 1);
   void resize(
-      uint32 rowCount,
-      uint32 colCount);
+      TI rowCount,
+      TI colCount);
   void setRowCount(
-      uint32 rowCount);
+      TI rowCount);
   void setColCount(
-      uint32 colCount);
+      TI colCount);
 
   //---------------
   // Преобразование
@@ -96,13 +99,13 @@ public:
 
   static Matrix *fromPP(
       TT **PP,
-      uint32 rowCount,
-      uint32 colCount,
+      TI rowCount,
+      TI colCount,
       bool storeRows = true);
   static Matrix *fromP(
       TT *P,
-      uint32 rowCount,
-      uint32 colCount,
+      TI rowCount,
+      TI colCount,
       bool storeRows = true);
 
   //--------
@@ -115,7 +118,7 @@ public:
 
   static void printMatrix(
       TT **m,
-      uint32 rows,
-      uint32 cols,
+      TI rows,
+      TI cols,
       int width = 6);
 };

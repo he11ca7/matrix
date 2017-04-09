@@ -24,8 +24,8 @@ Matrix::Matrix(
     uint32 colCount,
     bool storeRows)
 {
+  _defaultValue = -1; // Провоцирует NaN
   _NaN = NAN;
-  _default = -1; // Провоцирует NaN
 
   _storeRows = storeRows;
   _indexer = storeRows ?
@@ -44,7 +44,7 @@ Matrix::Matrix(
       _data = (TT *) malloc(_size);
 
       assert(_data);
-      memset(_data, _default, _size);
+      memset(_data, _defaultValue, _size);
     }
 }
 
@@ -298,7 +298,7 @@ void Matrix::resize(
       if(_rowCount < rowCount)
         memset(
               _data + _indexer(_rowCount - 1, _colCount - 1, _rowCount, _colCount) + 1,
-              _default,
+              _defaultValue,
               (rowCount * colCount - _rowCount * _colCount) * sizeof(TT)
               );
     }
@@ -309,7 +309,7 @@ void Matrix::resize(
       _data = (TT *) malloc(_size);
       assert(_data);
 
-      memset(_data, _default, _size);
+      memset(_data, _defaultValue, _size);
 
       for(uint32 i = 0; i < rowCount; ++i)
         for(uint32 j = 0; j < colCount; ++j)

@@ -23,8 +23,8 @@ private:
           _rowCount,      /// Количество строк
           _colCount;      /// Количество столбцов
   bool    _storeRows;     /// Признак построчного внутреннего хранения
+  TT      _defaultValue;  /// Значение по умолчанию
   TT      _NaN;           /// NaN
-  TT      _default;       /// Значение по умолчанию
 
   //------------
   // Индексаторы
@@ -56,8 +56,12 @@ public:
   uint32 rowCount() const {return _rowCount;} ///< Количество строк
   uint32 colCount() const {return _colCount;} ///< Количество столбцов
   bool storeMode() const {return _storeRows;} ///< Способ внутреннего хранения
+  TT defaultValue() const {return _defaultValue;} ///< Значение по умолчанию
+
   void setStoreMode(
       bool storeRows);
+  void setDefaultValue(
+      TT defaultValue) {_defaultValue = defaultValue;}
 
   void clear();
   bool isEmpty() const {return _size == 0;}   ///< Является ли матрица пустой

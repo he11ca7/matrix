@@ -16,7 +16,7 @@ Matrix *m = new Matrix(2, 3);
 m->o(0, 0) = 1;
 m->o(1, 0) = 3;
 m->o(2, 2) = 5;
-Matrix::
+Matrix::printMatrix(m);
 ```
 
 Результат:

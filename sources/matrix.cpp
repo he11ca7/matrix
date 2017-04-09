@@ -25,6 +25,7 @@ Matrix::Matrix(
     bool storeRows)
 {
   _NaN = NAN;
+  _default = -1; // Провоцирует NaN
 
   _storeRows = storeRows;
   _indexer = storeRows ?
@@ -43,7 +44,7 @@ Matrix::Matrix(
       _data = (TT *) malloc(_size);
 
       assert(_data);
-      memset((void *) _data, 0, _size);
+      memset(_data, _default, _size);
     }
 }
 
@@ -86,7 +87,7 @@ uint32 Matrix::indexerCol(
 Matrix::~Matrix()
 {
   if (!_data) return;
-  free((void *) _data);
+  free(_data);
 }
 
 /*!
@@ -133,11 +134,7 @@ void Matrix::setStoreMode(
   // Временно копировать старые данные
   TT *data = (TT *) malloc(_size);
   assert(_data);
-  memcpy(
-        (void *) data,
-        (void *) _data,
-        _size
-        );
+  memcpy(data, _data, _size);
 
   // Переместить данные
   for(uint32 i = 0; i < _rowCount; ++i)
@@ -177,13 +174,12 @@ void Matrix::deleteRow(
           // Позиция "сдвигаемой" части памяти
           uint32 pos = _indexer(row + count, 0, _rowCount, _colCount);
           memmove(
-                (void *) &_data[_indexer(row, 0, _rowCount, _colCount)],
-              (void *) &_data[pos],
-
-              (_rowCount * _colCount - pos) * sizeof(TT)
-              );
+                _data + _indexer(row, 0, _rowCount, _colCount),
+                _data + pos,
+                (_rowCount * _colCount - pos) * sizeof(TT)
+                );
         }
-      _data = (TT *) realloc((void *) _data, _size);
+      _data = (TT *) realloc(_data, _size);
       assert(_data);
     }
   else
@@ -236,13 +232,12 @@ void Matrix::deleteCol(
           // Позиция "сдвигаемой" части памяти
           uint32 pos = _indexer(0, col + count, _rowCount, _colCount);
           memmove(
-                (void *) &_data[_indexer(0, col, _rowCount, _colCount)],
-              (void *) &_data[pos],
-
-              (_rowCount * _colCount - pos) * sizeof(TT)
-              );
+                _data + _indexer(0, col, _rowCount, _colCount),
+                _data + pos,
+                (_rowCount * _colCount - pos) * sizeof(TT)
+                );
         }
-      _data = (TT *) realloc((void *) _data, _size);
+      _data = (TT *) realloc(_data, _size);
       assert(_data);
     }
   else
@@ -297,15 +292,15 @@ void Matrix::resize(
      (rowCount == _rowCount && !_storeRows)
      )
     {
-      _data = (TT *) realloc((void *) _data, _size);
+      _data = (TT *) realloc(_data, _size);
       assert(_data);
 
       if(_rowCount < rowCount)
         memset(
-              (void *) &_data[_indexer(_rowCount - 1, _colCount - 1, _rowCount, _colCount) + 1],
-            0,
-            (rowCount * colCount - _rowCount * _colCount) * sizeof(TT)
-            );
+              _data + _indexer(_rowCount - 1, _colCount - 1, _rowCount, _colCount) + 1,
+              _default,
+              (rowCount * colCount - _rowCount * _colCount) * sizeof(TT)
+              );
     }
   // ... остальные случаи
   else
@@ -314,7 +309,7 @@ void Matrix::resize(
       _data = (TT *) malloc(_size);
       assert(_data);
 
-      memset((void *) _data, 0, _size);
+      memset(_data, _default, _size);
 
       for(uint32 i = 0; i < rowCount; ++i)
         for(uint32 j = 0; j < colCount; ++j)
@@ -370,11 +365,7 @@ TT *Matrix::toP()
   assert(result);
 
   // Содержимое
-  memcpy(
-        (void *) result,
-        (void *) _data,
-        _size
-        );
+  memcpy( result, _data, _size);
 
   return result;
 }

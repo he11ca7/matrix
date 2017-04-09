@@ -7,6 +7,7 @@ typedef real64 TT;
 // TODO Ввести коды ошибки для методов (в виде параметра--ссылки)
 // TODO Ввести typedef на тип размерностей
 // TODO Тестировать toP()
+// TODO Ввести методы получения отдельных строк/столбцов (нескольких подряд)
 
 /*!
  * \brief Класс Матрица
@@ -54,10 +55,10 @@ public:
   // Параметры
   //----------
 
-  uint32 size() const {return _size;}         ///< Объём выделенной памяти
-  uint32 rowCount() const {return _rowCount;} ///< Количество строк
-  uint32 colCount() const {return _colCount;} ///< Количество столбцов
-  bool storeMode() const {return _storeRows;} ///< Способ внутреннего хранения
+  uint32 size() const {return _size;}             ///< Объём выделенной памяти
+  uint32 rowCount() const {return _rowCount;}     ///< Количество строк
+  uint32 colCount() const {return _colCount;}     ///< Количество столбцов
+  bool storeMode() const {return _storeRows;}     ///< Способ внутреннего хранения
   TT defaultValue() const {return _defaultValue;} ///< Значение по умолчанию
 
   void setStoreMode(
@@ -66,7 +67,7 @@ public:
       TT defaultValue) {_defaultValue = defaultValue;}
 
   void clear();
-  bool isEmpty() const {return _size == 0;}   ///< Является ли матрица пустой
+  bool isEmpty() const {return _size == 0;} ///< Является ли матрица пустой
 
   //-----------
   // Управление
@@ -81,6 +82,10 @@ public:
   void resize(
       uint32 rowCount,
       uint32 colCount);
+  void setRowCount(
+      uint32 rowCount);
+  void setColCount(
+      uint32 colCount);
 
   //---------------
   // Преобразование
@@ -88,6 +93,17 @@ public:
 
   TT **toPP();
   TT *toP();
+
+  static Matrix *fromPP(
+      TT **PP,
+      uint32 rowCount,
+      uint32 colCount,
+      bool storeRows = true);
+  static Matrix *fromP(
+      TT *P,
+      uint32 rowCount,
+      uint32 colCount,
+      bool storeRows = true);
 
   //--------
   // Отладка

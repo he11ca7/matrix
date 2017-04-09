@@ -326,17 +326,40 @@ void Matrix::resize(
 }
 
 /*!
+ * \brief Изменить число строк
+ * \param rowCount Число строк
+ */
+void Matrix::setRowCount(
+    uint32 rowCount)
+{
+  resize(rowCount, _colCount);
+}
+
+/*!
+ * \brief Изменить число столбцов
+ * \param colCount Чтсло столбцов
+ */
+void Matrix::setColCount(
+    uint32 colCount)
+{
+  resize(_rowCount, colCount);
+}
+
+/*!
  * \brief Преобразовать матрицу в вид двумерного динамического массива
+ *
+ * Признак построчного внутреннего хранения влияет на работу этой функции.
+ * Если включено построчное хранение, каждый из указателей *toPP() будет
+ * ссылаться на строку.
  * \return Указатель на указатель
  */
 TT **Matrix::toPP()
 {
   if(isEmpty()) return NULL;
 
+  // Память
   uint32 dimension1 = _storeRows ? _rowCount : _colCount;
   uint32 dimension2 = _storeRows ? _colCount : _rowCount;
-
-  // Память
   TT **result = (TT **) malloc(dimension1 * sizeof(TT *));
   assert(result);
   for(uint32 i = 0; i < dimension1; ++i)
@@ -346,9 +369,20 @@ TT **Matrix::toPP()
     }
 
   // Содержимое
-  for(uint32 i = 0; i < _rowCount; ++i)
+  if(_storeRows)
+    for(uint32 i = 0; i < _rowCount; ++i)
+      memcpy(
+            *(result + i),
+            _data + _indexer(i, 0, _rowCount, _colCount),
+            _colCount * sizeof(TT)
+            );
+  else
     for(uint32 j = 0; j < _colCount; ++j)
-      result[i][j] = _data[_indexer(i, j, _rowCount, _colCount)];
+      memcpy(
+            *(result + j),
+            _data + _indexer(0, j, _rowCount, _colCount),
+            _rowCount * sizeof(TT)
+            );
 
   return result;
 }
@@ -366,7 +400,67 @@ TT *Matrix::toP()
   assert(result);
 
   // Содержимое
-  memcpy( result, _data, _size);
+  memcpy(result, _data, _size);
+
+  return result;
+}
+
+/*!
+ * \brief Сгенерировать матрицу из указателя на указатель
+ *
+ * Признак построчного внутреннего хранения влияет на работу этой функции.
+ * Если включено построчное хранение, предполагается, что каждый из указателей
+ * *PP ссылается на строку.
+ * \param PP Указатель на указатель на данные
+ * \param rowCount Число строк
+ * \param colCount Число столбцов
+ * \param storeRows Признак построчного внутреннего хранения
+ * \return
+ */
+Matrix *Matrix::fromPP(
+    TT **PP,
+    uint32 rowCount,
+    uint32 colCount,
+    bool storeRows)
+{
+  if(rowCount == 0 || colCount == 0)
+    return NULL;
+
+  Matrix *result = new Matrix(rowCount, colCount, storeRows);
+  for(uint32 i = 0; i < result->rowCount(); ++i)
+    for(uint32 j = 0; j < result->colCount(); ++j)
+      result->v(i, j) = storeRows ? PP[i][j] : PP[j][i];
+
+  return result;
+}
+
+/*!
+ * \brief Сгенерировать матрицу из указателя
+ *
+ * Признак построчного внутреннего хранения влияет на работу этой функции.
+ * \param P Указатель на данные
+ * \param rowCount Число строк
+ * \param colCount Число столбцов
+ * \param storeRows Признак построчного внутреннего хранения
+ * \return
+ */
+Matrix *Matrix::fromP(
+    TT *P,
+    uint32 rowCount,
+    uint32 colCount,
+    bool storeRows)
+{
+  if(rowCount == 0 || colCount == 0)
+    return NULL;
+
+  Matrix *result = new Matrix(rowCount, colCount, storeRows);
+  MatrixIndexer indexer = storeRows ?
+        (MatrixIndexer) indexerRow
+      :
+        (MatrixIndexer) indexerCol;
+  for(uint32 i = 0; i < rowCount; ++i)
+    for(uint32 j = 0; j < colCount; ++j)
+      result->v(i, j) = P[indexer(i, j, rowCount, colCount)];
 
   return result;
 }

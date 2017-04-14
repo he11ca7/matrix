@@ -45,7 +45,7 @@ Matrix::Matrix(
 
       assert(_data);
       memset(_data, _defaultValue, _size);
-  }
+    }
 }
 
 /*!
@@ -117,25 +117,29 @@ void Matrix::clear()
  * \param rowEnd Индекс строки-конца
  * \param colBeg Индекс столбца-начала
  * \param colEnd Индекс столбца-конца
+ * \param copy Выполнить операцию над копией и вернуть копию
+ * \return Экземпляр, над которым была выполнена операция
  */
-void Matrix::part(
+Matrix *Matrix::part(
     Matrix::TI rowBeg,
     Matrix::TI rowEnd,
     Matrix::TI colBeg,
-    Matrix::TI colEnd)
+    Matrix::TI colEnd,
+    bool copy)
 {
+  if(copy) return (new Matrix(*this))->part(rowBeg, rowEnd, colBeg, colEnd);
+
   if((rowBeg > rowEnd) || (colBeg > colEnd) ||
      (rowBeg >= _rowCount) || (rowEnd >= _rowCount) ||
      (colBeg >= _colCount) || (colEnd >= _colCount)
      )
     // Некорректный ввод
-    return;
+    return this;
 
   TI
       rowCount = rowEnd - rowBeg + 1,
       colCount = colEnd - colBeg + 1;
-
-  if((rowCount == _rowCount) && (colCount == _colCount)) return;
+  if((rowCount == _rowCount) && (colCount == _colCount)) return this;
 
   _size = rowCount * colCount * sizeof(TT);
 
@@ -182,14 +186,16 @@ void Matrix::part(
 
       for(TI i = 0; i < rowCount; ++i)
         for(TI j = 0; j < colCount; ++j)
-            _data[_indexer(i, j, rowCount, colCount)] =
-                data[_indexer(i + rowBeg, j + colBeg, _rowCount, _colCount)];
+          _data[_indexer(i, j, rowCount, colCount)] =
+              data[_indexer(i + rowBeg, j + colBeg, _rowCount, _colCount)];
 
       free(data);
     }
 
   _rowCount = rowCount;
   _colCount = colCount;
+
+  return this;
 }
 
 /*!

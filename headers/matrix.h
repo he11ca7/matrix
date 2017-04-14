@@ -87,11 +87,12 @@ public:
   // Управление
   //-----------
 
-  void part(
+  Matrix *part(
       TI rowBeg,
       TI rowEnd,
       TI colBeg,
-      TI colEnd);
+      TI colEnd,
+      bool copy = false);
   void resize(
       TI rowCount,
       TI colCount);

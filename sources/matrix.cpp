@@ -55,6 +55,7 @@ Matrix::Matrix(
 Matrix::Matrix(
     const Matrix &copy)
 {
+  // TODO См. проблему оператор=
   *this = copy;
 }
 
@@ -215,8 +216,11 @@ Matrix::~Matrix()
 Matrix &Matrix::operator=(
     const Matrix &copy)
 {
+  // TODO Для конструктора копирования данная проверка вообще неактуальна
   if (*this == copy) return *this;
 
+  // TODO Данная строка в случае конструктора копирования вызывает
+  // неопределённое поведение
   if(_data) free(_data);
 
   _rowCount = copy._rowCount;

@@ -3,7 +3,7 @@ TEMPLATE = lib
 
 OBJECTS_DIR = obj
 MOC_DIR = moc
-CONFIG += staticlib
+CONFIG += staticlib c++11
 DESTDIR = ../libs
 
 INCLUDEPATH += \

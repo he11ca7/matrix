@@ -48,44 +48,6 @@ Matrix::Matrix(
     }
 }
 
-/*!
- * \brief Индексатор по строкам
- *
- * Индексатор для матрицы, представленной в виде указателя на данные,
- * представленные по строкам
- * \param row Индекс строки
- * \param col Индекс столбца
- * \param colCount Число столбцов
- * \return Индекс места в памяти
- */
-Matrix::TI Matrix::indexerRow(
-    Matrix::TI row,
-    Matrix::TI col,
-    Matrix::TI,
-    Matrix::TI colCount)
-{
-  return row * colCount + col;
-}
-
-/*!
- * \brief Индексатор по столбцам
- *
- * Индексатор для матрицы, представленной в виде указателя на данные,
- * представленные по столбцам
- * \param row Индекс строки
- * \param col Индекс столбца
- * \param rowCount Число строк
- * \return Индекс места в памяти
- */
-Matrix::TI Matrix::indexerCol(
-    Matrix::TI row,
-    Matrix::TI col,
-    Matrix::TI rowCount,
-    Matrix::TI)
-{
-  return col * rowCount + row;
-}
-
 void Matrix::_copy(
     const Matrix &copy)
 {
@@ -117,6 +79,8 @@ void Matrix::clear()
 
 /*!
  * \brief Обрезать матрицу
+ *
+ * При (copy = true) операция выполняется над копией, которая затем возвращается
  * \param rowBeg Индекс строки-начала
  * \param rowEnd Индекс строки-конца
  * \param colBeg Индекс столбца-начала

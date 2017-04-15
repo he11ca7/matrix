@@ -18,8 +18,8 @@ public:
   typedef real64 TT; // Данные
   typedef uint32 TI; // Итераторы
 
-  static TI indexerRow(TI row, TI col, TI, TI colCount);
-  static TI indexerCol(TI row, TI col, TI rowCount, TI);
+  static TI indexerRow(TI row, TI col, TI, TI colCount) {return row * colCount + col;}
+  static TI indexerCol(TI row, TI col, TI rowCount, TI) {return col * rowCount + row;}
 
   Matrix(
       TI rowCount,

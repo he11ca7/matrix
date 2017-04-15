@@ -49,17 +49,6 @@ Matrix::Matrix(
 }
 
 /*!
- * \brief Конструктор копирования
- * \param Копируемый объект
- */
-Matrix::Matrix(
-    const Matrix &copy)
-{
-  // TODO См. проблему оператор=
-  *this = copy;
-}
-
-/*!
  * \brief Индексатор по строкам
  *
  * Индексатор для матрицы, представленной в виде указателя на данные,
@@ -95,6 +84,20 @@ Matrix::TI Matrix::indexerCol(
     Matrix::TI)
 {
   return col * rowCount + row;
+}
+
+void Matrix::_copy(
+    const Matrix &copy)
+{
+  _rowCount = copy._rowCount;
+  _colCount = copy._colCount;
+  _size = copy._size;
+  _data = (TT *) malloc(_size);
+  _storeRows = copy._storeRows;
+  _indexer = copy._indexer;
+
+  assert(_data);
+  memcpy(_data, copy._data, _size);
 }
 
 /*!
@@ -216,22 +219,10 @@ Matrix::~Matrix()
 Matrix &Matrix::operator=(
     const Matrix &copy)
 {
-  // TODO Для конструктора копирования данная проверка вообще неактуальна
-  if (*this == copy) return *this;
-
-  // TODO Данная строка в случае конструктора копирования вызывает
-  // неопределённое поведение
+  if(*this == copy) return *this;
   if(_data) free(_data);
 
-  _rowCount = copy._rowCount;
-  _colCount = copy._colCount;
-  _size = copy._size;
-  _data = (TT *) malloc(_size);
-  _storeRows = copy._storeRows;
-  _indexer = copy._indexer;
-
-  assert(_data);
-  memcpy(_data, copy._data, _size);
+  _copy(copy);
 
   return *this;
 }

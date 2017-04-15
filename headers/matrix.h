@@ -21,25 +21,6 @@ public:
   static TI indexerRow(TI row, TI col, TI, TI colCount);
   static TI indexerCol(TI row, TI col, TI rowCount, TI);
 
-private:
-
-  typedef TI (*MatrixIndexer) (TI row, TI col, TI rowCount, TI colCount);
-
-  TI
-  _rowCount,  // Число строк
-  _colCount,  // Число столбцов
-  _size;      // Объём памяти данных
-
-  TT
-  *_data,         // Данные
-  _defaultValue,  // Значение по умолчанию для memset
-  _NaN;           // NaN
-
-  bool _storeRows;         // Признак построчного внутреннего хранения
-  MatrixIndexer _indexer;  // Индексатор
-
-public:
-
   Matrix(
       TI rowCount,
       TI colCount,
@@ -47,7 +28,7 @@ public:
   Matrix(
       bool storeRows = true) : Matrix(0, 0, storeRows) {} // NOTE C++11
   Matrix(
-      const Matrix &copy);
+      const Matrix &copy) {_copy(copy);}
   ~Matrix();
 
   Matrix &operator=(
@@ -139,4 +120,24 @@ public:
       TI cols,
       bool storeRows = true,
       int width = 6);
+
+private:
+
+  typedef TI (*MatrixIndexer) (TI row, TI col, TI rowCount, TI colCount);
+
+  TI
+  _rowCount,  // Число строк
+  _colCount,  // Число столбцов
+  _size;      // Объём памяти данных
+
+  TT
+  *_data,         // Данные
+  _defaultValue,  // Значение по умолчанию для memset
+  _NaN;           // NaN
+
+  bool _storeRows;         // Признак построчного внутреннего хранения
+  MatrixIndexer _indexer;  // Индексатор
+
+  void _copy(
+      const Matrix &copy);
 };
